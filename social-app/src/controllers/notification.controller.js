@@ -21,3 +21,20 @@ exports.markRead = async (req, res) => {
         res.status(500).json({ success: false, error: { message: err.message } });
     }
 };
+exports.markAllRead = async (req, res) => {
+    try {
+        await Notification.updateMany({ recipient: req.user.sub, isRead: false }, { isRead: true });
+        res.json({ success: true, message: 'All marked as read' });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
+    }
+};
+
+exports.getUnreadCount = async (req, res) => {
+    try {
+        const count = await Notification.countDocuments({ recipient: req.user.sub, isRead: false });
+        res.json({ success: true, data: { count } });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
+    }
+};
