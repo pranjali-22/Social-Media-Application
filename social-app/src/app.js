@@ -17,6 +17,7 @@ app.use('/api/v1/posts', require('./routes/post.routes'));
 app.use('/api/v1/follow', require('./routes/follow.routes'));
 app.use('/api/v1/likes', require('./routes/like.routes'));
 app.use('/api/v1/comments', require('./routes/comment.routes'));
+app.use('/api/v1/notifications', require('./routes/notification.routes'));
 
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
