@@ -12,18 +12,19 @@ exports.likeTarget = async (req, res) => {
 
         await Like.create({ user: req.user.sub, targetId, targetType });
 
-        if (targetType === 'post')
-            await Post.findByIdAndUpdate(targetId, { $inc: { likeCount: 1 } });
-        const post = await Post.findById(targetId);
-        if (post && post.user.toString() !== req.user.sub) {
-            await Notification.create({
-                recipient: post.user,
-                actor: req.user.sub,
-                type: 'like',
-                targetId,
-                targetType: 'post'
-            });
+        if (targetType === 'post') {
+            const post = await Post.findByIdAndUpdate(targetId, { $inc: { likeCount: 1 } }, { new: true });
+            if (post && post.user.toString() !== req.user.sub) {
+                await Notification.create({
+                    recipient: post.user,
+                    actor: req.user.sub,
+                    type: 'like',
+                    targetId,
+                    targetType: 'post'
+                });
+            }
         }
+
         res.json({ success: true, message: 'Liked successfully' });
     } catch (err) {
         res.status(500).json({ success: false, error: { message: err.message } });

@@ -1,12 +1,13 @@
 const Comment = require('../models/Comment');
 const Post = require('../models/Post');
+const Notification = require('../models/Notification');
 
 exports.addComment = async (req, res) => {
     try {
         const { content } = req.body;
         const { postId } = req.params;
 
-        const post = await Post.findById(postId);
+        const post = await Post.findByIdAndUpdate(postId, { $inc: { commentCount: 1 } }, { new: true });
         if (!post) return res.status(404).json({ success: false, error: { message: 'Post not found' } });
 
         const comment = await Comment.create({
@@ -15,28 +16,21 @@ exports.addComment = async (req, res) => {
             content
         });
 
-        await Post.findByIdAndUpdate(postId, { $inc: { commentCount: 1 } });
+        if (post.user.toString() !== req.user.sub) {
+            await Notification.create({
+                recipient: post.user,
+                actor: req.user.sub,
+                type: 'comment',
+                targetId: comment._id,
+                targetType: 'comment'
+            });
+        }
 
         res.status(201).json({ success: true, data: comment });
     } catch (err) {
         res.status(500).json({ success: false, error: { message: err.message } });
-
-
-        exports.getComments = async (req, res) => {
-            try {
-                const comments = await Comment.find({ post: req.params.postId, parent: null, isDeleted: false })
-                    .populate('user', 'username')
-                    .sort({ createdAt: -1 })
-                    .limit(20);
-
-                res.json({ success: true, data: comments });
-            } catch (err) {
-                res.status(500).json({ success: false, error: { message: err.message } });
-            }
-        };
     }
 };
-
 exports.getComments = async (req, res) => {
     try {
         const comments = await Comment.find({ post: req.params.postId, parent: null, isDeleted: false })
