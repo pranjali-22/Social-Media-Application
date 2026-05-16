@@ -21,6 +21,7 @@ exports.markRead = async (req, res) => {
         res.status(500).json({ success: false, error: { message: err.message } });
     }
 };
+
 exports.markAllRead = async (req, res) => {
     try {
         await Notification.updateMany({ recipient: req.user.sub, isRead: false }, { isRead: true });
