@@ -50,3 +50,43 @@ exports.getComments = async (req, res) => {
     }
 };
 
+exports.deleteComment = async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.commentId);
+        if (!comment) return res.status(404).json({ success: false, error: { message: 'Comment not found' } });
+        if (comment.user.toString() !== req.user.sub)
+            return res.status(403).json({ success: false, error: { message: 'Unauthorized' } });
+
+        comment.isDeleted = true;
+        await comment.save();
+
+        await Post.findByIdAndUpdate(comment.post, { $inc: { commentCount: -1 } });
+
+        res.json({ success: true, message: 'Comment deleted' });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
+    }
+};
+
+exports.replyComment = async (req, res) => {
+    try {
+        const { content } = req.body;
+        const { postId, parentId } = req.params;
+
+        const parent = await Comment.findById(parentId);
+        if (!parent) return res.status(404).json({ success: false, error: { message: 'Parent comment not found' } });
+
+        const reply = await Comment.create({
+            post: postId,
+            user: req.user.sub,
+            parent: parentId,
+            content
+        });
+
+        await Comment.findByIdAndUpdate(parentId, { $inc: { replyCount: 1 } });
+
+        res.status(201).json({ success: true, data: reply });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
+    }
+};
