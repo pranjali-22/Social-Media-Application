@@ -20,6 +20,33 @@ exports.addComment = async (req, res) => {
         res.status(201).json({ success: true, data: comment });
     } catch (err) {
         res.status(500).json({ success: false, error: { message: err.message } });
+
+
+        exports.getComments = async (req, res) => {
+            try {
+                const comments = await Comment.find({ post: req.params.postId, parent: null, isDeleted: false })
+                    .populate('user', 'username')
+                    .sort({ createdAt: -1 })
+                    .limit(20);
+
+                res.json({ success: true, data: comments });
+            } catch (err) {
+                res.status(500).json({ success: false, error: { message: err.message } });
+            }
+        };
+    }
+};
+
+exports.getComments = async (req, res) => {
+    try {
+        const comments = await Comment.find({ post: req.params.postId, parent: null, isDeleted: false })
+            .populate('user', 'username')
+            .sort({ createdAt: -1 })
+            .limit(20);
+
+        res.json({ success: true, data: comments });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
     }
 };
 
