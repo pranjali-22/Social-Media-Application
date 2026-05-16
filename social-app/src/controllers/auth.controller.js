@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const redis = require('../config/redis');
 require('dotenv').config();
 
 const generateTokens = (user) => {
@@ -28,6 +27,34 @@ exports.register = async (req, res) => {
         const { accessToken, refreshToken } = generateTokens(user);
 
         res.status(201).json({ success: true, data: { accessToken, refreshToken } });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
+    }
+};
+
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) return res.status(401).json({ success: false, error: { message: 'Invalid credentials' } });
+
+        const valid = await user.comparePassword(password);
+        if (!valid) return res.status(401).json({ success: false, error: { message: 'Invalid credentials' } });
+
+        const { accessToken, refreshToken } = generateTokens(user);
+
+        res.json({ success: true, data: { accessToken, refreshToken } });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
+    }
+};
+
+exports.logout = async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+
+        res.json({ success: true, message: 'Logged out' });
     } catch (err) {
         res.status(500).json({ success: false, error: { message: err.message } });
     }
