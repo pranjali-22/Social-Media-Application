@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 
-const followSchema = new mongoose.Schema({
-    follower:  { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    following: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    status:    { type: String, enum: ['pending', 'accepted'], default: 'accepted' },
+const notificationSchema = new mongoose.Schema({
+    recipient:  { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    actor:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    type:       { type: String, enum: ['like', 'comment', 'follow', 'mention', 'tag', 'reply'], required: true },
+    targetId:   { type: mongoose.Schema.Types.ObjectId },
+    targetType: { type: String, enum: ['post', 'comment', 'story'] },
+    isRead:     { type: Boolean, default: false },
 }, { timestamps: true });
 
-followSchema.index({ follower: 1, following: 1 }, { unique: true });
+notificationSchema.index({ recipient: 1, createdAt: -1 });
 
-module.exports = mongoose.model('Follow', followSchema);
+module.exports = mongoose.model('Notification', notificationSchema);
