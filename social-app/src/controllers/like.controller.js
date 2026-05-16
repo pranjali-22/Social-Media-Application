@@ -1,4 +1,5 @@
 const Like = require('../models/Like');
+const Notification = require('../models/Notification');
 const Post = require('../models/Post');
 
 exports.likeTarget = async (req, res) => {
@@ -13,7 +14,16 @@ exports.likeTarget = async (req, res) => {
 
         if (targetType === 'post')
             await Post.findByIdAndUpdate(targetId, { $inc: { likeCount: 1 } });
-
+        const post = await Post.findById(targetId);
+        if (post && post.user.toString() !== req.user.sub) {
+            await Notification.create({
+                recipient: post.user,
+                actor: req.user.sub,
+                type: 'like',
+                targetId,
+                targetType: 'post'
+            });
+        }
         res.json({ success: true, message: 'Liked successfully' });
     } catch (err) {
         res.status(500).json({ success: false, error: { message: err.message } });
