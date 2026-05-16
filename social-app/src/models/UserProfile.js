@@ -6,8 +6,6 @@ const userProfileSchema = new mongoose.Schema({
     bio:            { type: String, maxlength: 150 },
     avatarUrl:      { type: String },
     websiteUrl:     { type: String },
-    dateOfBirth:    { type: Date },
-    gender:         { type: String, enum: ['male', 'female', 'other', 'prefer_not_to_say'] },
     isPrivate:      { type: Boolean, default: false },
     followerCount:  { type: Number, default: 0 },
     followingCount: { type: Number, default: 0 },
