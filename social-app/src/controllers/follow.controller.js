@@ -1,6 +1,7 @@
 const Follow = require('../models/Follow');
 const User = require('../models/User');
 const UserProfile = require('../models/UserProfile');
+const Notification = require('../models/Notification');
 
 exports.followUser = async (req, res) => {
     try {
@@ -16,7 +17,12 @@ exports.followUser = async (req, res) => {
 
         await Follow.create({ follower: followerId, following: followingId });
 
-        // Update counts
+        await Notification.create({
+            recipient: followingId,
+            actor: followerId,
+            type: 'follow'
+        });
+
         await UserProfile.findOneAndUpdate({ user: followerId }, { $inc: { followingCount: 1 } }, { upsert: true });
         await UserProfile.findOneAndUpdate({ user: followingId }, { $inc: { followerCount: 1 } }, { upsert: true });
 
@@ -35,7 +41,6 @@ exports.unfollowUser = async (req, res) => {
         if (!follow)
             return res.status(400).json({ success: false, error: { message: 'Not following this user' } });
 
-        // Update counts
         await UserProfile.findOneAndUpdate({ user: followerId }, { $inc: { followingCount: -1 } });
         await UserProfile.findOneAndUpdate({ user: followingId }, { $inc: { followerCount: -1 } });
 
