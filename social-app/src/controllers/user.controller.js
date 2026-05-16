@@ -2,8 +2,10 @@ const User = require('../models/User');
 const UserProfile = require('../models/UserProfile');
 
 exports.getProfile = async (req, res) => {
+    // console.log("here")
     try {
         const user = await User.findOne({ username: req.params.username }).select('-password');
+        // console.log(user)
         if (!user) return res.status(404).json({ success: false, error: { message: 'User not found' } });
 
         const profile = await UserProfile.findOne({ user: user._id });
