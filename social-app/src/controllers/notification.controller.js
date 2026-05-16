@@ -12,3 +12,12 @@ exports.getNotifications = async (req, res) => {
         res.status(500).json({ success: false, error: { message: err.message } });
     }
 };
+
+exports.markRead = async (req, res) => {
+    try {
+        await Notification.findByIdAndUpdate(req.params.id, { isRead: true });
+        res.json({ success: true, message: 'Marked as read' });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
+    }
+};
