@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 30 },
@@ -10,14 +10,13 @@ const userSchema = new mongoose.Schema({
     role:       { type: String, enum: ['user', 'admin'], default: 'user' },
 }, { timestamps: true });
 
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 12);
-    next();
+userSchema.pre('save', async function () {
+    if (!this.isModified('password')) return;
+    this.password = await bcryptjs.hash(this.password, 12);
 });
 
 userSchema.methods.comparePassword = async function (plain) {
-    return bcrypt.compare(plain, this.password);
+    return bcryptjs.compare(plain, this.password);
 };
 
 module.exports = mongoose.model('User', userSchema);
