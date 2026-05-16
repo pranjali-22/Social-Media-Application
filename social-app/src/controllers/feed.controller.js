@@ -22,3 +22,16 @@ exports.getHomeFeed = async (req, res) => {
     }
 };
 
+exports.getExploreFeed = async (req, res) => {
+    try {
+        const posts = await Post.find({ isArchived: false })
+            .populate('user', 'username')
+            .sort({ likeCount: -1, createdAt: -1 })
+            .limit(20);
+
+        res.json({ success: true, data: posts });
+    } catch (err) {
+        res.status(500).json({ success: false, error: { message: err.message } });
+    }
+};
+
