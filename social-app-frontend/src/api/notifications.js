@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiURL.js';
+import { API_BASE_URL } from './apiUrl.js';
 const NOTIF_URL = `${API_BASE_URL}/api/v1/notifications`;
 
 export async function getNotifications(token) {
