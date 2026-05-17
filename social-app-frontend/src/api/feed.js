@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiUrl';
+import { API_BASE_URL } from './apiUrl.js';
 const FEED_URL = `${API_BASE_URL}/api/v1/feed`;
 
 export async function getHomeFeed(token) {
