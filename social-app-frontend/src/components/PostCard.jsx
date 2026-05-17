@@ -1,37 +1,22 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { getHomeFeed } from '../api/feed';
-import useAuthStore from '../store/authStore';
-import Navbar from '../components/Navbar';
-import PostCard from '../components/PostCard';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-export default function FeedPage() {
-    const { token } = useAuthStore();
-    const router = useRouter();
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (!token) { router.push('/login'); return; }
-        getHomeFeed(token).then((res) => {
-            if (!res.error) setPosts(res.data);
-            setLoading(false);
-        });
-    }, [token]);
-
+export default function PostCard({ post }) {
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Navbar />
-            <div className="max-w-xl mx-auto pt-20 pb-10 px-4">
-                <h2 className="text-xl font-bold mb-6">Home Feed</h2>
-                {loading ? (
-                    <p className="text-center text-gray-400">Loading...</p>
-                ) : posts.length === 0 ? (
-                    <p className="text-center text-gray-400">No posts yet. Follow some users!</p>
-                ) : (
-                    posts.map((post) => <PostCard key={post._id} post={post} />)
-                )}
+        <div className="bg-white rounded-xl shadow p-5 mb-4">
+            <div className="flex items-center justify-between mb-2">
+                <Link href={`/profile/${post.user?.username}`} className="font-semibold text-sm hover:underline">
+                    @{post.user?.username}
+                </Link>
+                <span className="text-xs text-gray-400">{new Date(post.createdAt).toLocaleDateString()}</span>
+            </div>
+            <p className="text-gray-800 mb-3">{post.caption}</p>
+            <div className="flex gap-4 text-sm text-gray-500">
+                <span>♥ {post.likeCount}</span>
+                <span>💬 {post.commentCount}</span>
+                <Link href={`/posts/${post._id}`} className="ml-auto text-black font-medium text-xs hover:underline">
+                    View Post
+                </Link>
             </div>
         </div>
     );
