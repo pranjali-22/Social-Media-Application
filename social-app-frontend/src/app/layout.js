@@ -1,5 +1,5 @@
 import { Geist } from 'next/font/google';
-import './globals.css';
+// import './globals.css';
 
 const geist = Geist({ subsets: ['latin'] });
 

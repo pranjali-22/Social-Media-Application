@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiURL.js';
+import { API_BASE_URL } from './apiUrl.js';
 const USER_URL = `${API_BASE_URL}/api/v1/users`;
 
 export async function getProfile(username) {

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiURL.js';
+import { API_BASE_URL } from './apiUrl.js';
 const AUTH_URL = `${API_BASE_URL}/api/v1/auth`;
 
 export async function registerUser(username, email, password) {
