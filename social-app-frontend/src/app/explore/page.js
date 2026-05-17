@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getHomeFeed } from '../../api/feed';
+import { getExploreFeed } from '../../api/feed';
 import Navbar from '../../components/Navbar';
 import PostCard from '../../components/PostCard';
 

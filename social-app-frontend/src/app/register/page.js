@@ -16,9 +16,8 @@ export default function Register() {
         e.preventDefault();
         setLoading(true);
         const res = await registerUser(form.username, form.email, form.password);
-        if (res.error) {
-            toast.error(res.error);
-        } else {
+        if (res.error) toast.error(res.error);
+        else {
             toast.success('Account created! Please login.');
             router.push('/login');
         }

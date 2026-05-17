@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { getProfile } from '@/api/user';
-import { getUserPosts } from '@/api/posts';
-import { followUser, unfollowUser } from '@/api/follow';
-import useAuthStore from '@/store/authStore';
-import Navbar from '@/components/Navbar';
-import PostCard from '@/components/PostCard';
+import { getProfile } from '../../../api/user';
+import { getUserPosts } from '../../../api/posts';
+import { followUser, unfollowUser } from '../../../api/follow';
+import useAuthStore from '../../../store/authStore';
+import Navbar from '../../../components/Navbar';
+import PostCard from '../../../components/PostCard';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function ProfilePage() {
