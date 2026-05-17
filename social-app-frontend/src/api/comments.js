@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiURL.js';
+import { API_BASE_URL } from './apiUrl.js';
 const COMMENT_URL = `${API_BASE_URL}/api/v1/comments`;
 
 export async function addComment(token, postId, content) {

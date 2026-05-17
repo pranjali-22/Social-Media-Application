@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiURL.js';
+import { API_BASE_URL } from './apiUrl.js';
 const LIKES_URL = `${API_BASE_URL}/api/v1/likes`;
 
 export async function likeTarget(token, targetId, targetType) {
